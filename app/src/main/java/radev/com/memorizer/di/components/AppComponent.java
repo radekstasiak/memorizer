@@ -16,7 +16,6 @@ import radev.com.memorizer.di.module.AppModule;
 
 @Singleton
 @Component(modules = {ApiTranslatorModule.class, AppModule.class})
-
 public interface AppComponent {
     void inject(Dashboard activity);
 }

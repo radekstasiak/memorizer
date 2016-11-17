@@ -5,12 +5,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import radev.com.memorizer.apiTranslator.ApiTranslatorService;
-import radev.com.memorizer.apiTranslator.TranslatorResponse;
 import radev.com.memorizer.app.MemorizerApp;
 import radev.com.memorizer.app.Settings;
 import retrofit2.Call;
@@ -34,8 +36,14 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
         MemorizerApp.getInstance().getComponent().inject(this);
         tv.setText(mSettings.getUrl());
 
-        Call<String> callback = mApiService.getSimpleTranslation("gtx","en","pl","t","perplexed");
+        Call<String> callback = mApiService.getSimpleTranslation("gtx","en","pl","t","build");
+        List<String> optonParams = new ArrayList<String>();
+        optonParams.add("t");
+        optonParams.add("bd");
+
+        Call<String> callback2 = mApiService.getFullTranslation("gtx","en","pl",optonParams,"build");
         callback.enqueue(Dashboard.this);
+        callback2.enqueue(Dashboard.this);
     }
 
     @Override

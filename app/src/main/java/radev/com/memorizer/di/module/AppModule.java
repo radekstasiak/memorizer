@@ -22,7 +22,7 @@ public class AppModule {
     }
 
     @Provides
-    public MemorizerApp provideFireflyApp() {
+    public MemorizerApp provideMemorizerApp() {
         return mApp;
     }
 

@@ -21,6 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 @Singleton
 public class ApiTranslatorModule {
+
     @Provides
     public ApiTranslatorService provideApiService(Settings settings){
         OkHttpClient httpClient = new OkHttpClient.Builder()
