@@ -8,12 +8,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import radev.com.memorizer.app.Settings;
 import radev.com.memorizer.databinding.WordHistoryListItemBinding;
+import radev.com.memorizer.model.Translation;
 
 /**
  * Created here and now by radek.
@@ -22,32 +26,35 @@ import radev.com.memorizer.databinding.WordHistoryListItemBinding;
 
 public class WordHistoryListAdapter extends RecyclerView.Adapter<WordHistoryListAdapter.ViewHolder> {
     private static final String TAG = "WordHistoryListAdapter";
-    private List<String> mDataSet;
+    private List<Translation> mDataSet;
 
     private Context mContext;
+    private Settings mSettings;
 
-    public WordHistoryListAdapter(Context ctx){
-        this.mContext = ctx;
+    public WordHistoryListAdapter(Settings settings){
+        mSettings = settings;
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         WordHistoryListItemBinding binding = DataBindingUtil
                 .inflate(LayoutInflater.from(viewGroup.getContext()), R.layout.word_history_list_item,
                         viewGroup, false);
+        mContext = viewGroup.getContext();
         return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
-        String text = mDataSet.get(position);
+        String text = mDataSet.get(position).getSource();
         TextView translationSource = viewHolder.textView;
 
         final RecyclerView translatedWordRecyclerView = viewHolder.mRecyclerView;
-        WordHistoryListAdapter adapter = new WordHistoryListAdapter(mContext);
+
+        TranslatedWordHistoryListAdapter adapter = new TranslatedWordHistoryListAdapter();
         translatedWordRecyclerView.setAdapter(adapter);
         translatedWordRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        adapter.setData(Dashboard.wordsMap.get(text));
+        adapter.setData(mDataSet.get(position).getTranslationList());
         translationSource.setText(text);
         translationSource.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,14 +67,29 @@ public class WordHistoryListAdapter extends RecyclerView.Adapter<WordHistoryList
             }
         });
 
+        viewHolder.mDeleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateDataSet(position);
+            }
+        });
+
 
 
 
 
     }
 
-    public void setData(List<String> data) {
+    public void updateDataSet(int position){
+        if(this.mDataSet!=null){
+            mDataSet.remove(position);
+            mSettings.saveTranslationHistory(mDataSet);
+            notifyDataSetChanged();
+        }
+    }
+    public void setData(List<Translation> data) {
         mDataSet = data;
+        Collections.sort(mDataSet);
         notifyDataSetChanged();
     }
 
@@ -82,14 +104,16 @@ public class WordHistoryListAdapter extends RecyclerView.Adapter<WordHistoryList
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         public  TextView textView;
         public RecyclerView mRecyclerView;
-
+        public Button mDeleteBtn;
         public ViewHolder(WordHistoryListItemBinding binding) {
             super(binding.getRoot());
             textView = binding.textView;
             mRecyclerView = binding.recyclerView;
+            mDeleteBtn = binding.deleteBtn;
+            mDeleteBtn.setVisibility(View.VISIBLE);
         }
 
     }

@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,23 +21,22 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import radev.com.memorizer.apiTranslator.ApiTranslatorService;
 import radev.com.memorizer.app.MemorizerApp;
 import radev.com.memorizer.app.Settings;
 import radev.com.memorizer.databinding.ActivityDashboardBinding;
+import radev.com.memorizer.model.Translation;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Dashboard extends AppCompatActivity implements Callback<String> {
-
-
     List<String> mData = Arrays.asList("Hello", "world");
     RecyclerView mRecycler;
     ActivityDashboardBinding binding;
     WordHistoryListAdapter mAdapter;
+
     @Inject
     ApiTranslatorService mApiService;
 
@@ -48,7 +46,8 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
     TextView tv;
     EditText mProvideWordEt;
     Button mNextBtn;
-    static HashMap<String, List<String>> wordsMap = new HashMap<>();
+
+    static List<Translation> wordsMap = new ArrayList<Translation>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +63,11 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
 
         tv = binding.textView;
         tv.setText(mSettings.getUrl());
-        mAdapter = new WordHistoryListAdapter(this);
+        mAdapter = new WordHistoryListAdapter(mSettings);
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
         mRecycler.setAdapter(mAdapter);
-
-
-        //Call<String> callback = mApiService.getSimpleTranslation("gtx","en","pl","t",mProvideWordEt.getText().toString());
-
+        wordsMap = mSettings.getTranslationHistory();
+        mAdapter.setData(wordsMap);
 
         mNextBtn.setOnClickListener(new View.OnClickListener() {
 
@@ -85,12 +82,11 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
                 // optonParams.add("ss");
                 // optonParams.add("ex");
                 //  optonParams.add("rw");
-                Call<String> callback2 = mApiService.getFullTranslation("gtx","en","pl",optonParams,mProvideWordEt.getText().toString());
+                Call<String> callback2 = mApiService.getFullTranslation("gtx", "en", "pl", optonParams, mProvideWordEt.getText().toString());
                 // callback.enqueue(Dashboard.this);
                 callback2.enqueue(Dashboard.this);
             }
         });
-
 
 
     }
@@ -100,24 +96,29 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
         response.body();
 
         try {
-            JSONArray obja= new JSONArray(response.body());
-
-            JSONArray array = (JSONArray) ((JSONArray)((JSONArray)obja.get(1)).get(0)).get(1);
+            JSONArray obja = new JSONArray(response.body());
+            JSONArray array = (JSONArray) ((JSONArray) ((JSONArray) obja.get(1)).get(0)).get(1);
             List<String> translationList = new ArrayList<String>();
-            for(int i=0; i<array.length();i++){
-                //JSONObject jsonObject = (JSONObject) array.get(i);
+            Translation translation = new Translation();
+            translation.setSource(mProvideWordEt.getText().toString());
+            translation.setTimestamp(System.currentTimeMillis());
+            for (int i = 0; i < array.length(); i++) {
                 translationList.add((String) array.get(i));
-
             }
-            wordsMap.put(mProvideWordEt.getText().toString(),translationList);
-            mAdapter.setData(new ArrayList<String>(wordsMap.keySet()));
+            translation.setTranslationList(translationList);
+            wordsMap.add(translation);
+            mAdapter.setData(wordsMap);
+            mSettings.saveTranslationHistory(wordsMap);
+            mProvideWordEt.setText("");
         } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
     }
 
     @Override
     public void onFailure(Call<String> call, Throwable t) {
-        Log.d("FAILURE",t.getMessage());
+        Log.d("FAILURE", t.getMessage());
     }
 }
