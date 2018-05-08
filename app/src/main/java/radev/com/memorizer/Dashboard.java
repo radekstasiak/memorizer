@@ -78,6 +78,7 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
         Toast.makeText(this, calendar.getTime().toString(), Toast.LENGTH_SHORT).show();
 
         int intervalMillis = 1000 * 60 * 60 * 8; //5 sec
+        //int intervalMillis = 1000 * 60; //5 sec
         alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), intervalMillis, alarmIntent);
 
 
