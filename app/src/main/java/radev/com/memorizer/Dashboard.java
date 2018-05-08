@@ -1,8 +1,14 @@
 package radev.com.memorizer;
 
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,6 +22,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,7 +39,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Dashboard extends AppCompatActivity implements Callback<String> {
-    List<String> mData = Arrays.asList("Hello", "world");
     RecyclerView mRecycler;
     ActivityDashboardBinding binding;
     WordHistoryListAdapter mAdapter;
@@ -48,10 +54,56 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
     Button mNextBtn;
 
     static List<Translation> wordsMap = new ArrayList<Translation>();
+    private AlarmManager alarmMgr;
+    private PendingIntent alarmIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        alarmMgr = (AlarmManager)getApplication().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getApplication(), AlarmReceiver.class);
+        alarmIntent = PendingIntent.getBroadcast(getApplication(), 0, intent, 0);
+
+// Set the alarm to start at 8:30 a.m.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 18);
+        calendar.set(Calendar.MINUTE, 41);
+
+
+
+// setRepeating() lets you specify a precise custom interval--in this case,
+// 20 minutes.
+//        int intervalMillis = 1000 * 60 * 20; // 20 mins
+        int intervalMillis = 3; //5 sec
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                intervalMillis, alarmIntent);
+
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                .setContentTitle("New Message")
+                .setContentText("You've received new messages.")
+                .setSmallIcon(R.mipmap.ic_launcher);
+// Sets an ID for the notification
+        int mNotificationId = 001;
+// Gets an instance of the NotificationManager service
+        NotificationManager mNotifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+// Builds the notification and issues it.
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+
+// Sets an ID for the notification, so it can be updated
+        int notifyID = 1;
+        int numMessages = 0;
+// Start of a loop that processes data and then notifies the user
+        mBuilder.setContentText("siema")
+                .setNumber(++numMessages);
+        // Because the ID remains unchanged, the existing notification is
+        // updated.
+        mNotifyMgr.notify(
+                notifyID,
+                mBuilder.build());
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard);
         ButterKnife.bind(this);

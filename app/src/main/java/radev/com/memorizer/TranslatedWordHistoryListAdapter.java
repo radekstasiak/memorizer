@@ -43,11 +43,6 @@ public class TranslatedWordHistoryListAdapter extends RecyclerView.Adapter<Trans
         RecyclerView translatedWordRecyclerView = viewHolder.mRecyclerView;
         translatedWordRecyclerView.setVisibility(View.GONE);
         translationSource.setText(text);
-
-
-
-
-
     }
 
     public void setData(List<String> data) {

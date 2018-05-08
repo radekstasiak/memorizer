@@ -115,6 +115,5 @@ public class WordHistoryListAdapter extends RecyclerView.Adapter<WordHistoryList
             mDeleteBtn = binding.deleteBtn;
             mDeleteBtn.setVisibility(View.VISIBLE);
         }
-
     }
 }
