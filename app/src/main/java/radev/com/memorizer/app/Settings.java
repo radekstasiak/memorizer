@@ -37,7 +37,7 @@ public class Settings {
     }
 
     static synchronized Settings get() {
-        if (sInstance == null) sInstance = new Settings();
+        if (sInstance == null) sInstance = new Settings(MemorizerApp.getInstance().getApplicationContext());
         return sInstance;
     }
     public String getUrl() {

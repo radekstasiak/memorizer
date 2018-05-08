@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +24,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -61,49 +63,23 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        alarmMgr = (AlarmManager)getApplication().getSystemService(Context.ALARM_SERVICE);
+        alarmMgr = (AlarmManager) getApplication().getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(getApplication(), AlarmReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(getApplication(), 0, intent, 0);
 
-// Set the alarm to start at 8:30 a.m.
         Calendar calendar = Calendar.getInstance();
+        Date currentTime = calendar.getTime();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 18);
-        calendar.set(Calendar.MINUTE, 41);
 
+        calendar.set(Calendar.HOUR_OF_DAY, currentTime.getHours());
+        calendar.set(Calendar.MINUTE, currentTime.getMinutes());
+        calendar.set(Calendar.SECOND, currentTime.getSeconds() + 30);
 
+        Toast.makeText(this, calendar.getTime().toString(), Toast.LENGTH_SHORT).show();
 
-// setRepeating() lets you specify a precise custom interval--in this case,
-// 20 minutes.
-//        int intervalMillis = 1000 * 60 * 20; // 20 mins
-        int intervalMillis = 3; //5 sec
-        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                intervalMillis, alarmIntent);
+        int intervalMillis = 1000 * 60 * 60 * 8; //5 sec
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), intervalMillis, alarmIntent);
 
-
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-                .setContentTitle("New Message")
-                .setContentText("You've received new messages.")
-                .setSmallIcon(R.mipmap.ic_launcher);
-// Sets an ID for the notification
-        int mNotificationId = 001;
-// Gets an instance of the NotificationManager service
-        NotificationManager mNotifyMgr =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-// Builds the notification and issues it.
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
-
-// Sets an ID for the notification, so it can be updated
-        int notifyID = 1;
-        int numMessages = 0;
-// Start of a loop that processes data and then notifies the user
-        mBuilder.setContentText("siema")
-                .setNumber(++numMessages);
-        // Because the ID remains unchanged, the existing notification is
-        // updated.
-        mNotifyMgr.notify(
-                notifyID,
-                mBuilder.build());
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard);
         ButterKnife.bind(this);
