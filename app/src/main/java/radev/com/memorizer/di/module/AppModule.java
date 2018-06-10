@@ -1,5 +1,8 @@
 package radev.com.memorizer.di.module;
 
+import android.app.AlarmManager;
+import android.content.Context;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -30,6 +33,18 @@ public class AppModule {
     @Singleton
     public Settings settings() {
         return new Settings(mApp);
+    }
+
+    @Provides
+    @Singleton
+    public Context provideContext() {
+        return mApp.getApplicationContext();
+    }
+
+    @Provides
+    @Singleton
+    public AlarmManager proideAlarmManager() {
+        return mApp.getAlarmManager();
     }
 
 

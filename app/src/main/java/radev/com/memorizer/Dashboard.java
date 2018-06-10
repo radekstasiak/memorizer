@@ -52,34 +52,20 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
     @Inject
     Settings mSettings;
 
+    @Inject
+    AlarmScheduler alarmScheduler;
+
     TextView tv;
     EditText mProvideWordEt;
     Button mNextBtn;
 
     static List<Translation> wordsMap = new ArrayList<Translation>();
-    private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
+//    private AlarmManager alarmMgr;
+//    private PendingIntent alarmIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        alarmMgr = (AlarmManager) getApplication().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(getApplication(), AlarmReceiver.class);
-        alarmIntent = PendingIntent.getBroadcast(getApplication(), 0, intent, 0);
-
-        Calendar calendar = Calendar.getInstance();
-        Date currentTime = calendar.getTime();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-
-        calendar.set(Calendar.HOUR_OF_DAY, currentTime.getHours());
-        calendar.set(Calendar.MINUTE, currentTime.getMinutes());
-        calendar.set(Calendar.SECOND, currentTime.getSeconds() + 30);
-
-        Toast.makeText(this, calendar.getTime().toString(), Toast.LENGTH_SHORT).show();
-
-        int intervalMillis = 1000 * 60 * 60 * 8; //5 sec
-        //int intervalMillis = 1000 * 60; //5 sec
-        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), intervalMillis, alarmIntent);
 
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard);
@@ -124,11 +110,11 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
 
     private void setupLanguagePickers() {
         Spinner languageFromSpinner = binding.languageFrom;
-        ArrayAdapter<String> adapterFrom = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,
+        ArrayAdapter<String> adapterFrom = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
                 Arrays.asList(Language.ENGLISH.name(), Language.DUTCH.name(), Language.POLISH.name()));
         languageFromSpinner.setAdapter(adapterFrom);
         Spinner languageToSpinner = binding.languageTo;
-        ArrayAdapter<String> adapterTo = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,
+        ArrayAdapter<String> adapterTo = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
                 Arrays.asList(Language.POLISH.name(), Language.ENGLISH.name(), Language.DUTCH.name()));
         languageToSpinner.setAdapter(adapterTo);
 
@@ -155,7 +141,7 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
             if (obja.get(1) instanceof JSONArray) {
                 array = (JSONArray) ((JSONArray) ((JSONArray) obja.get(1)).get(0)).get(1);
             } else {
-                array = new JSONArray(Arrays.asList(((JSONArray)((JSONArray)obja.get(0)).get(0)).get(0)));
+                array = new JSONArray(Arrays.asList(((JSONArray) ((JSONArray) obja.get(0)).get(0)).get(0)));
             }
             List<String> translationList = new ArrayList<String>();
             Translation translation = new Translation();
@@ -169,6 +155,7 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
             mAdapter.setData(wordsMap);
             mSettings.saveTranslationHistory(wordsMap);
             mProvideWordEt.setText("");
+            alarmScheduler.schedulerNextAlarm();
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (ClassCastException e) {
