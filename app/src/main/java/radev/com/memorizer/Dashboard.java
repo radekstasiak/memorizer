@@ -1,20 +1,20 @@
 package radev.com.memorizer;
 
 import android.app.AlarmManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +35,7 @@ import radev.com.memorizer.apiTranslator.ApiTranslatorService;
 import radev.com.memorizer.app.MemorizerApp;
 import radev.com.memorizer.app.Settings;
 import radev.com.memorizer.databinding.ActivityDashboardBinding;
+import radev.com.memorizer.model.Language;
 import radev.com.memorizer.model.Translation;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,7 +63,6 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         alarmMgr = (AlarmManager) getApplication().getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(getApplication(), AlarmReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(getApplication(), 0, intent, 0);
@@ -89,6 +89,7 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
         mRecycler = binding.recyclerView;
         mProvideWordEt = binding.enterWordEt;
         mNextBtn = binding.nextBtn;
+        setupLanguagePickers();
 
         tv = binding.textView;
         tv.setText(mSettings.getUrl());
@@ -111,13 +112,33 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
                 // optonParams.add("ss");
                 // optonParams.add("ex");
                 //  optonParams.add("rw");
-                Call<String> callback2 = mApiService.getFullTranslation("gtx", "en", "pl", optonParams, mProvideWordEt.getText().toString());
+                Language languageFrom = Language.valueOf(binding.languageFrom.getSelectedItem().toString());
+                Language languageTo = Language.valueOf(binding.languageTo.getSelectedItem().toString());
+                mSettings.saveFromToLanguages(languageFrom, languageTo);
+                Call<String> callback2 = mApiService.getFullTranslation("gtx", languageFrom.getLanguageCode(), languageTo.getLanguageCode(), optonParams, mProvideWordEt.getText().toString());
                 // callback.enqueue(Dashboard.this);
                 callback2.enqueue(Dashboard.this);
             }
         });
+    }
 
+    private void setupLanguagePickers() {
+        Spinner languageFromSpinner = binding.languageFrom;
+        ArrayAdapter<String> adapterFrom = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,
+                Arrays.asList(Language.ENGLISH.name(), Language.DUTCH.name(), Language.POLISH.name()));
+        languageFromSpinner.setAdapter(adapterFrom);
+        Spinner languageToSpinner = binding.languageTo;
+        ArrayAdapter<String> adapterTo = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,
+                Arrays.asList(Language.POLISH.name(), Language.ENGLISH.name(), Language.DUTCH.name()));
+        languageToSpinner.setAdapter(adapterTo);
 
+        List<Language> fromToLanguages = mSettings.getFromToLanguages();
+        if (!fromToLanguages.isEmpty()) {
+            int positionFromLanguage = adapterFrom.getPosition(fromToLanguages.get(0).name());
+            languageFromSpinner.setSelection(positionFromLanguage);
+            int positionToLanguage = adapterTo.getPosition(fromToLanguages.get(1).name());
+            languageToSpinner.setSelection(positionToLanguage);
+        }
     }
 
     @Override

@@ -73,11 +73,6 @@ public class WordHistoryListAdapter extends RecyclerView.Adapter<WordHistoryList
                 updateDataSet(position);
             }
         });
-
-
-
-
-
     }
 
     public void updateDataSet(int position){
@@ -100,7 +95,6 @@ public class WordHistoryListAdapter extends RecyclerView.Adapter<WordHistoryList
         }
 
         return mDataSet.size();
-
     }
 
 

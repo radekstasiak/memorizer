@@ -10,8 +10,10 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import radev.com.memorizer.model.Language;
 import radev.com.memorizer.model.Translation;
 
 /**
@@ -26,6 +28,9 @@ public class Settings {
     private static Settings sInstance;
     private Gson gson;
     private ObjectMapper objectMapper;
+    String TRANSLATION_HISTORY_PREFS_NAME = "TranslationListHistory";
+    String FROM_TO_LANGUAGES_PREFS_NAME = "FromToLanguages";
+
     public Settings(Context context) {
         mPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         gson = new Gson();
@@ -46,7 +51,7 @@ public class Settings {
     }
 
     public List<Translation> getTranslationHistory(){
-        String json = mPreferences.getString("TranslationListHistory", "");
+        String json = mPreferences.getString(TRANSLATION_HISTORY_PREFS_NAME, "");
         List<Translation> obj = null;
         try {
             obj = objectMapper.readValue(json,new TypeReference<List<Translation>>(){});
@@ -63,10 +68,30 @@ public class Settings {
 
     public void saveTranslationHistory(List<Translation> translationArrayList){
         SharedPreferences.Editor prefsEditor = mPreferences.edit();
-        prefsEditor.putString("TranslationListHistory", gson.toJson(translationArrayList));
+        prefsEditor.putString(TRANSLATION_HISTORY_PREFS_NAME, gson.toJson(translationArrayList));
         prefsEditor.commit();
     }
 
+    public List<Language> getFromToLanguages() {
+        String json = mPreferences.getString(FROM_TO_LANGUAGES_PREFS_NAME, "");
+        List<Language> obj = null;
+        try {
+            obj = objectMapper.readValue(json,new TypeReference<List<Language>>(){});
+            if(obj==null){
+                return new ArrayList<Language>();
+            }
+            return obj;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        return new ArrayList<Language>();
+    }
+
+    public void saveFromToLanguages(final Language from, final Language to) {
+        SharedPreferences.Editor prefsEditor = mPreferences.edit();
+        prefsEditor.putString(FROM_TO_LANGUAGES_PREFS_NAME, gson.toJson(Arrays.asList(from, to)));
+        prefsEditor.commit();
+    }
 
 }
