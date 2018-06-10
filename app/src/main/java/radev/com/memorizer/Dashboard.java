@@ -15,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -158,6 +156,7 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
             Translation translation = new Translation();
             translation.setSource(mProvideWordEt.getText().toString());
             translation.setTimestamp(System.currentTimeMillis());
+            translation.setLanguageTo(Language.valueOf(binding.languageTo.getSelectedItem().toString()));
             for (int i = 0; i < array.length(); i++) {
                 translationList.add((String) array.get(i));
             }
