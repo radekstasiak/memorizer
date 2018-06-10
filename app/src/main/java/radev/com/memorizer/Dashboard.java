@@ -132,6 +132,10 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
                 Arrays.asList(Language.POLISH.name(), Language.ENGLISH.name(), Language.DUTCH.name()));
         languageToSpinner.setAdapter(adapterTo);
 
+        restoreLastLanguagesUsed(languageFromSpinner, adapterFrom, languageToSpinner, adapterTo);
+    }
+
+    private void restoreLastLanguagesUsed(Spinner languageFromSpinner, ArrayAdapter<String> adapterFrom, Spinner languageToSpinner, ArrayAdapter<String> adapterTo) {
         List<Language> fromToLanguages = mSettings.getFromToLanguages();
         if (!fromToLanguages.isEmpty()) {
             int positionFromLanguage = adapterFrom.getPosition(fromToLanguages.get(0).name());
@@ -147,7 +151,13 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
 
         try {
             JSONArray obja = new JSONArray(response.body());
-            JSONArray array = (JSONArray) ((JSONArray) ((JSONArray) obja.get(1)).get(0)).get(1);
+            JSONArray array = null;
+            if (obja.get(1) instanceof JSONArray) {
+                array = (JSONArray) ((JSONArray) ((JSONArray) obja.get(1)).get(0)).get(1);
+            } else {
+//                ((JSONArray)((JSONArray)obja.get(0)).get(0)).get(0)
+                array = new JSONArray(Arrays.asList(((JSONArray)((JSONArray)obja.get(0)).get(0)).get(0)));
+            }
             List<String> translationList = new ArrayList<String>();
             Translation translation = new Translation();
             translation.setSource(mProvideWordEt.getText().toString());
