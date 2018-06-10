@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import radev.com.memorizer.AlarmScheduler;
+import radev.com.memorizer.app.Settings;
 
 /**
  * Created here and now by radek.
@@ -19,7 +20,7 @@ public class NotificationModule {
 
     @Provides
     @Singleton
-    public AlarmScheduler provideAlarmScheduler(AlarmManager alarmManager, Context context) {
-       return new AlarmScheduler(context, alarmManager);
+    public AlarmScheduler provideAlarmScheduler(AlarmManager alarmManager, Context context, Settings settings) {
+       return new AlarmScheduler(context, alarmManager,settings);
     }
 }

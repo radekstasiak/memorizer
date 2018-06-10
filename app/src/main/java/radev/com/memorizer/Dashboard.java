@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -32,6 +35,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import radev.com.memorizer.apiTranslator.ApiTranslatorService;
+import radev.com.memorizer.apiTranslator.TimePickerFragment;
 import radev.com.memorizer.app.MemorizerApp;
 import radev.com.memorizer.app.Settings;
 import radev.com.memorizer.databinding.ActivityDashboardBinding;
@@ -55,6 +59,8 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
     @Inject
     AlarmScheduler alarmScheduler;
 
+    @Inject
+    TimePickerFragment timerPickerFragment;
     TextView tv;
     EditText mProvideWordEt;
     Button mNextBtn;
@@ -155,7 +161,6 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
             mAdapter.setData(wordsMap);
             mSettings.saveTranslationHistory(wordsMap);
             mProvideWordEt.setText("");
-            alarmScheduler.schedulerNextAlarm();
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (ClassCastException e) {
@@ -166,5 +171,26 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
     @Override
     public void onFailure(Call<String> call, Throwable t) {
         Log.d("FAILURE", t.getMessage());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_items, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_alarm:
+                showTimePickerDialog();
+                break;
+        }
+        return true;
+    }
+
+    public void showTimePickerDialog() {
+        timerPickerFragment.show(getSupportFragmentManager(), "timePicker");
     }
 }

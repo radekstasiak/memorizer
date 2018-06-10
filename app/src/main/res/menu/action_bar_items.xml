@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_alarm"
+        android:icon="@drawable/baseline_alarm_white_36"
+        android:title="@string/action_alarm"
+        android:visible="true"
+        app:showAsAction="always"/>
+
+</menu>
