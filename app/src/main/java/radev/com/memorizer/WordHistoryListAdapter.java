@@ -104,10 +104,11 @@ public class WordHistoryListAdapter extends RecyclerView.Adapter<WordHistoryList
         public Button mDeleteBtn;
         public ViewHolder(WordHistoryListItemBinding binding) {
             super(binding.getRoot());
-            textView = binding.textView;
+            textView = binding.word;
             mRecyclerView = binding.recyclerView;
             mDeleteBtn = binding.deleteBtn;
             mDeleteBtn.setVisibility(View.VISIBLE);
+            binding.translatedLanguage.setVisibility(View.VISIBLE);
         }
     }
 }

@@ -41,16 +41,9 @@
                 android:text="NEXT"
                 android:layout_weight="3"/>
         </LinearLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"
-            android:layout_below="@id/userControlLL"
-            android:id="@+id/text_view" />
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
-            android:layout_below="@+id/text_view"
+            android:layout_below="@+id/userControlLL"
             android:layout_margin="15dp"
             android:overScrollMode="never"
             android:layout_width="match_parent"

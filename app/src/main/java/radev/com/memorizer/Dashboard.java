@@ -52,7 +52,6 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
     @Inject
     Settings mSettings;
 
-    TextView tv;
     EditText mProvideWordEt;
     Button mNextBtn;
 
@@ -91,8 +90,6 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
         mNextBtn = binding.nextBtn;
         setupLanguagePickers();
 
-        tv = binding.textView;
-        tv.setText(mSettings.getUrl());
         mAdapter = new WordHistoryListAdapter(mSettings);
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
         mRecycler.setAdapter(mAdapter);
