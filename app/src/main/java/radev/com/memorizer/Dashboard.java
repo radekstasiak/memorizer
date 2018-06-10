@@ -155,7 +155,6 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
             if (obja.get(1) instanceof JSONArray) {
                 array = (JSONArray) ((JSONArray) ((JSONArray) obja.get(1)).get(0)).get(1);
             } else {
-//                ((JSONArray)((JSONArray)obja.get(0)).get(0)).get(0)
                 array = new JSONArray(Arrays.asList(((JSONArray)((JSONArray)obja.get(0)).get(0)).get(0)));
             }
             List<String> translationList = new ArrayList<String>();

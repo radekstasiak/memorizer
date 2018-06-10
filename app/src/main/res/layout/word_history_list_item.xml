@@ -16,14 +16,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:text="siema"/>
-fire
         <Button
             android:id="@+id/deleteBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:visibility="gone"
             android:layout_alignParentRight="true"
-            android:text="DELETE"/>
+            android:background="@drawable/baseline_delete_black_18"/>
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
