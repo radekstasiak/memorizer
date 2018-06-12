@@ -24,6 +24,9 @@ public class Translation implements Comparable<Translation>{
     @SerializedName("languageTo")
     Language languageTo;
 
+    @SerializedName("languageFrom")
+    Language languageFrom;
+
     @SerializedName("translationList")
     List<String> translationList = new ArrayList<String>();
 
@@ -56,6 +59,14 @@ public class Translation implements Comparable<Translation>{
 
     public void setLanguageTo(Language languageTo) {
         this.languageTo = languageTo;
+    }
+
+    public Language getLanguageFrom() {
+        return languageFrom;
+    }
+
+    public void setLanguageFrom(Language languageFrom) {
+        this.languageFrom = languageFrom;
     }
 
     @Override

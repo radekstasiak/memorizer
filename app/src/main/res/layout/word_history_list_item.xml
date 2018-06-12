@@ -4,47 +4,90 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:gravity="center_vertical">
 
         <RelativeLayout
             android:id="@+id/sourceLl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/word"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:text="siema"/>
-        <TextView
-            android:id="@+id/translatedLanguage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="pl"
-            android:textColor="@color/blue"
-            android:textAlignment="center"
-            android:drawableTint="@color/grey"
-            android:drawableTintMode="multiply"
-            android:visibility="gone"
-            android:layout_toLeftOf="@id/deleteBtn"
-            android:background="@drawable/outline_texture_black_18"
-            />
-        <Button
-            android:id="@+id/deleteBtn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:visibility="gone"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/baseline_delete_black_18"/>
+
+            <TextView
+                android:id="@+id/word"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="siema"
+                android:textSize="18sp" />
+
+            <RelativeLayout
+                android:id="@+id/translatedLanguageRl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/deleteBtn"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:id="@+id/sourceLanguageRl"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/red_circle" />
+                    <TextView
+                        android:id="@+id/sourceLanguageTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="PL"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/destinationLanguageRl"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@id/sourceLanguageRl">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/green_circle" />
+                    <TextView
+                        android:id="@+id/destinationLanguageTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="PL"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/deleteBtn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/baseline_delete_black_18"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_below="@+id/sourceLl"
-            android:visibility="gone"
             android:layout_margin="15dp"
             android:overScrollMode="never"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:visibility="gone" />
     </RelativeLayout>
 </layout>
