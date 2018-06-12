@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import radev.com.memorizer.app.Settings;
@@ -46,8 +45,8 @@ public class WordHistoryListAdapter extends RecyclerView.Adapter<WordHistoryList
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
         Log.d(TAG, "Element " + position + " set.");
-        String text = mDataSet.get(position).getSource();
-        TextView translationSource = viewHolder.textView;
+        String sourceWord = mDataSet.get(position).getSource();
+        TextView translationSource = viewHolder.translationSourceTv;
 
         final RecyclerView translatedWordRecyclerView = viewHolder.mRecyclerView;
 
@@ -55,7 +54,8 @@ public class WordHistoryListAdapter extends RecyclerView.Adapter<WordHistoryList
         translatedWordRecyclerView.setAdapter(adapter);
         translatedWordRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         adapter.setData(mDataSet.get(position).getTranslationList());
-        translationSource.setText(text);
+        translationSource.setText(sourceWord);
+        viewHolder.translatedLanguageTv.setText(mDataSet.get(position).getLanguageTo().getLanguageCode());
         translationSource.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,15 +99,18 @@ public class WordHistoryListAdapter extends RecyclerView.Adapter<WordHistoryList
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        public  TextView textView;
+        public TextView translationSourceTv;
+        public TextView translatedLanguageTv;
         public RecyclerView mRecyclerView;
         public Button mDeleteBtn;
         public ViewHolder(WordHistoryListItemBinding binding) {
             super(binding.getRoot());
-            textView = binding.textView;
+            translationSourceTv = binding.word;
             mRecyclerView = binding.recyclerView;
             mDeleteBtn = binding.deleteBtn;
             mDeleteBtn.setVisibility(View.VISIBLE);
+            binding.translatedLanguage.setVisibility(View.VISIBLE);
+            translatedLanguageTv = binding.translatedLanguage;
         }
     }
 }

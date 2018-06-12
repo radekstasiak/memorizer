@@ -1,14 +1,18 @@
 package radev.com.memorizer;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,8 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.inject.Inject;
 
@@ -62,17 +66,14 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
     @Inject
     TimePickerFragment timerPickerFragment;
     TextView tv;
+
     EditText mProvideWordEt;
     Button mNextBtn;
 
     static List<Translation> wordsMap = new ArrayList<Translation>();
-//    private AlarmManager alarmMgr;
-//    private PendingIntent alarmIntent;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard);
         ButterKnife.bind(this);
@@ -83,8 +84,6 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
         mNextBtn = binding.nextBtn;
         setupLanguagePickers();
 
-        tv = binding.textView;
-        tv.setText(mSettings.getUrl());
         mAdapter = new WordHistoryListAdapter(mSettings);
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
         mRecycler.setAdapter(mAdapter);
@@ -112,7 +111,78 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
                 callback2.enqueue(Dashboard.this);
             }
         });
+
+        binding.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openWordExercisePopup();
+            }
+        });
     }
+
+    private void openWordExercisePopup() {
+        if (!wordsMap.isEmpty()) {
+            int randomWordPosition = ThreadLocalRandom.current().nextInt(0, wordsMap.size());
+            final Translation translation = wordsMap.get(randomWordPosition);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(translation.getSource() + " to " + translation.getLanguageTo().getLanguageCode().toUpperCase());
+
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+            builder.setPositiveButton("Ready!", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String answer = input.getText().toString();
+                    if (!answer.isEmpty()) {
+                        for (String translationWord : translation.getTranslationList()) {
+                            if (translationWord.toLowerCase().equals(answer.toLowerCase())) {
+                                openWordExerciseResultPopup(translation, true);
+                                dialog.cancel();
+                                return;
+                            }
+                        }
+                        openWordExerciseResultPopup(translation, false);
+                    }
+                }
+            });
+            builder.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            builder.show();
+        }
+    }
+
+
+    private void openWordExerciseResultPopup(Translation translation, boolean isAnswerCorrect) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(isAnswerCorrect ? "CORRECT!" : "Whoops...");
+
+        final TextView input = new TextView(this);
+        input.setText(translation.getSource() + "\n" + TextUtils.join(", ", translation.getTranslationList()));
+        builder.setView(input);
+        builder.setPositiveButton("Give me next one!", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                openWordExercisePopup();
+                dialog.cancel();
+                return;
+            }
+        });
+        builder.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
 
     private void setupLanguagePickers() {
         Spinner languageFromSpinner = binding.languageFrom;
@@ -153,6 +223,7 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
             Translation translation = new Translation();
             translation.setSource(mProvideWordEt.getText().toString());
             translation.setTimestamp(System.currentTimeMillis());
+            translation.setLanguageTo(Language.valueOf(binding.languageTo.getSelectedItem().toString()));
             for (int i = 0; i < array.length(); i++) {
                 translationList.add((String) array.get(i));
             }

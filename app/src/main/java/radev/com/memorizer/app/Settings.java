@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -26,14 +25,18 @@ public class Settings {
 
     private SharedPreferences mPreferences;
     private static final String PREF_NAME = "User Details";
-    private static Settings sInstance;
-    private Gson gson;
-    private ObjectMapper objectMapper;
-    String TRANSLATION_HISTORY_PREFS_NAME = "TranslationListHistory";
-    String FROM_TO_LANGUAGES_PREFS_NAME = "FromToLanguages";
+    private static final String TRANSLATION_HISTORY_PREFS_NAME = "TranslationListHistory";
+    private static final String FROM_TO_LANGUAGES_PREFS_NAME = "FromToLanguages";
     String CURRENT_ALARM_HOURS = "CurrentAlarmHour";
     String CURRENT_ALARM_MINUTE = "CurrentAlarmMinute";
     String CURRENT_ALARM_DATE = "CurrentAlarmDate";
+    private static Settings sInstance;
+    private Gson gson;
+    private ObjectMapper objectMapper;
+
+
+
+
 
     public Settings(Context context) {
         mPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
