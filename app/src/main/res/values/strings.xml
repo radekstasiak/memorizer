@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Memorizer</string>
+    <string name="action_alarm">Action Alarm</string>
 </resources>

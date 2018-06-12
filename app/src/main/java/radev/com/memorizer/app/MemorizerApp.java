@@ -1,5 +1,6 @@
 package radev.com.memorizer.app;
 
+import android.app.AlarmManager;
 import android.app.Application;
 
 import radev.com.memorizer.apiTranslator.ApiTranslatorModule;
@@ -36,5 +37,9 @@ public class MemorizerApp extends Application {
 
     public AppComponent getComponent() {
         return component;
+    }
+
+    public AlarmManager getAlarmManager(){
+        return (AlarmManager) this.getSystemService(ALARM_SERVICE);
     }
 }

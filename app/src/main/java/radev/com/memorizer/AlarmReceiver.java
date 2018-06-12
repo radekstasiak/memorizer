@@ -1,14 +1,18 @@
 package radev.com.memorizer;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
+import android.util.Log;;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import radev.com.memorizer.app.MemorizerApp;
 import radev.com.memorizer.app.Settings;
@@ -20,34 +24,28 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class AlarmReceiver extends BroadcastReceiver {
     static List<Translation> wordsMap = new ArrayList<Translation>();
 
-    public AlarmReceiver() {
+    @Inject
+    Settings settings;
 
-    }
+    @Inject
+    AlarmScheduler alarmScheduler;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-//        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
-//            // Register your reporting alarms here.
-//        }
-        Settings mSettings = MemorizerApp.getSettings();
-        wordsMap = mSettings.getTranslationHistory();
-        String word="";
+        MemorizerApp.getInstance().getComponent().inject(this);
+        wordsMap = settings.getTranslationHistory();
+        String word = "";
         if (wordsMap.size() > 0) {
             word = wordsMap.get(0).getSource().toString();
-            displayNotification(context,word);
+            displayNotification(context, word);
             Log.d("CLOCK", word);
         } else {
-
             Log.d("CLOCK", "TIC TIC TIC TACK");
         }
 
-
-
-
-
     }
 
-    private void displayNotification(Context context, String value){
+    private void displayNotification(Context context, String value) {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setContentTitle("New Message")

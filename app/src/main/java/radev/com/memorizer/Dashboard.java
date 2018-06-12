@@ -14,6 +14,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -36,6 +39,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import radev.com.memorizer.apiTranslator.ApiTranslatorService;
+import radev.com.memorizer.apiTranslator.TimePickerFragment;
 import radev.com.memorizer.app.MemorizerApp;
 import radev.com.memorizer.app.Settings;
 import radev.com.memorizer.databinding.ActivityDashboardBinding;
@@ -56,36 +60,20 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
     @Inject
     Settings mSettings;
 
+    @Inject
+    AlarmScheduler alarmScheduler;
+
+    @Inject
+    TimePickerFragment timerPickerFragment;
+    TextView tv;
+
     EditText mProvideWordEt;
     Button mNextBtn;
 
     static List<Translation> wordsMap = new ArrayList<Translation>();
-    private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        alarmMgr = (AlarmManager) getApplication().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(getApplication(), AlarmReceiver.class);
-        alarmIntent = PendingIntent.getBroadcast(getApplication(), 0, intent, 0);
-
-        Calendar calendar = Calendar.getInstance();
-        Date currentTime = calendar.getTime();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-
-        calendar.set(Calendar.HOUR_OF_DAY, currentTime.getHours());
-        calendar.set(Calendar.MINUTE, currentTime.getMinutes());
-        calendar.set(Calendar.SECOND, currentTime.getSeconds() + 30);
-
-
-
-        Toast.makeText(this, calendar.getTime().toString(), Toast.LENGTH_SHORT).show();
-
-        int intervalMillis = 1000 * 60 * 60 * 8; //5 sec
-        //int intervalMillis = 1000 * 60; //5 sec
-        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), intervalMillis, alarmIntent);
-
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard);
         ButterKnife.bind(this);
@@ -198,11 +186,11 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
 
     private void setupLanguagePickers() {
         Spinner languageFromSpinner = binding.languageFrom;
-        ArrayAdapter<String> adapterFrom = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,
+        ArrayAdapter<String> adapterFrom = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
                 Arrays.asList(Language.ENGLISH.name(), Language.DUTCH.name(), Language.POLISH.name()));
         languageFromSpinner.setAdapter(adapterFrom);
         Spinner languageToSpinner = binding.languageTo;
-        ArrayAdapter<String> adapterTo = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,
+        ArrayAdapter<String> adapterTo = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,
                 Arrays.asList(Language.POLISH.name(), Language.ENGLISH.name(), Language.DUTCH.name()));
         languageToSpinner.setAdapter(adapterTo);
 
@@ -229,7 +217,7 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
             if (obja.get(1) instanceof JSONArray) {
                 array = (JSONArray) ((JSONArray) ((JSONArray) obja.get(1)).get(0)).get(1);
             } else {
-                array = new JSONArray(Arrays.asList(((JSONArray)((JSONArray)obja.get(0)).get(0)).get(0)));
+                array = new JSONArray(Arrays.asList(((JSONArray) ((JSONArray) obja.get(0)).get(0)).get(0)));
             }
             List<String> translationList = new ArrayList<String>();
             Translation translation = new Translation();
@@ -254,5 +242,26 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
     @Override
     public void onFailure(Call<String> call, Throwable t) {
         Log.d("FAILURE", t.getMessage());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_items, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_alarm:
+                showTimePickerDialog();
+                break;
+        }
+        return true;
+    }
+
+    public void showTimePickerDialog() {
+        timerPickerFragment.show(getSupportFragmentManager(), "timePicker");
     }
 }
