@@ -94,6 +94,7 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
 
             @Override
             public void onClick(View v) {
+                if(!mProvideWordEt.getText().toString().isEmpty()){
                 List<String> optonParams = new ArrayList<String>();
                 optonParams.add("t");
                 //optonParams.add("at");
@@ -109,6 +110,8 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
                 Call<String> callback2 = mApiService.getFullTranslation("gtx", languageFrom.getLanguageCode(), languageTo.getLanguageCode(), optonParams, mProvideWordEt.getText().toString());
                 // callback.enqueue(Dashboard.this);
                 callback2.enqueue(Dashboard.this);
+
+                }
             }
         });
 
@@ -224,6 +227,7 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
             translation.setSource(mProvideWordEt.getText().toString());
             translation.setTimestamp(System.currentTimeMillis());
             translation.setLanguageTo(Language.valueOf(binding.languageTo.getSelectedItem().toString()));
+            translation.setLanguageFrom(Language.valueOf(binding.languageFrom.getSelectedItem().toString()));
             for (int i = 0; i < array.length(); i++) {
                 translationList.add((String) array.get(i));
             }

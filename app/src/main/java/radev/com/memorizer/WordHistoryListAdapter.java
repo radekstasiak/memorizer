@@ -56,6 +56,7 @@ public class WordHistoryListAdapter extends RecyclerView.Adapter<WordHistoryList
         adapter.setData(mDataSet.get(position).getTranslationList());
         translationSource.setText(sourceWord);
         viewHolder.translatedLanguageTv.setText(mDataSet.get(position).getLanguageTo().getLanguageCode());
+        viewHolder.sourceLanguageTv.setText(mDataSet.get(position).getLanguageFrom().getLanguageCode());
         translationSource.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,6 +102,7 @@ public class WordHistoryListAdapter extends RecyclerView.Adapter<WordHistoryList
     public static class ViewHolder extends RecyclerView.ViewHolder{
         public TextView translationSourceTv;
         public TextView translatedLanguageTv;
+        public TextView sourceLanguageTv;
         public RecyclerView mRecyclerView;
         public Button mDeleteBtn;
         public ViewHolder(WordHistoryListItemBinding binding) {
@@ -109,8 +111,9 @@ public class WordHistoryListAdapter extends RecyclerView.Adapter<WordHistoryList
             mRecyclerView = binding.recyclerView;
             mDeleteBtn = binding.deleteBtn;
             mDeleteBtn.setVisibility(View.VISIBLE);
-            binding.translatedLanguage.setVisibility(View.VISIBLE);
-            translatedLanguageTv = binding.translatedLanguage;
+            binding.translatedLanguageRl.setVisibility(View.VISIBLE);
+            translatedLanguageTv = binding.destinationLanguageTv;
+            sourceLanguageTv = binding.sourceLanguageTv;
         }
     }
 }
