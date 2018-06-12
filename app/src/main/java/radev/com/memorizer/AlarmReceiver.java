@@ -36,7 +36,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         MemorizerApp.getInstance().getComponent().inject(this);
-        alarmScheduler.schedulerNextAlarm();
         wordsMap = settings.getTranslationHistory();
         String word = "";
         if (wordsMap.size() > 0) {

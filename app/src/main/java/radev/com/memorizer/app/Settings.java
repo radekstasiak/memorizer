@@ -122,8 +122,8 @@ public class Settings {
         prefsEditor.commit();
     }
 
-    public int getCurrentAlarmDate(){
-        return  mPreferences.getInt(CURRENT_ALARM_DATE, Calendar.getInstance().get(Calendar.DATE));
+    public long getCurrentAlarmDate(){
+        return  mPreferences.getLong(CURRENT_ALARM_DATE, Calendar.getInstance().get(Calendar.DATE));
     }
 
     public void setCurrentAlarmDate(int value){

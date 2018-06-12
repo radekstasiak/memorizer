@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import radev.com.memorizer.AlarmReceiver;
+import radev.com.memorizer.BootReceiver;
 import radev.com.memorizer.Dashboard;
 import radev.com.memorizer.apiTranslator.ApiTranslatorModule;
 import radev.com.memorizer.apiTranslator.TimePickerFragment;
@@ -25,6 +26,8 @@ public interface AppComponent {
     void inject(Dashboard activity);
 
     void inject(AlarmReceiver alarmReceiver);
+
+    void inject(BootReceiver bootReceiver);
 
     void inject(TimePickerFragment timePickerFragment);
 }
