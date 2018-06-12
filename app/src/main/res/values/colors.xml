@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#f1863c</color>
+    <color name="colorPrimaryDark">#f86920</color>
+    <color name="colorAccent">#6ed2e6</color>
     <color name="grey">#808080</color>
-    <color name="blue">#0000ff</color>
-    <color name="limegreen">#32CD32</color>
-    <color name="crimson">#DC143C</color>
+    <color name="limegreen">#a9dbd8</color>
+    <color name="crimson">#fd706c</color>
+    <color name="turkish">#8bd7b1</color>
     <color name="white">#fff</color>
+    <color name="background">#e0e4cd</color>
 </resources>
