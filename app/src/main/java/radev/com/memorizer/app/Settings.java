@@ -29,7 +29,7 @@ public class Settings {
     private static final String FROM_TO_LANGUAGES_PREFS_NAME = "FromToLanguages";
     String CURRENT_ALARM_HOURS = "CurrentAlarmHour";
     String CURRENT_ALARM_MINUTE = "CurrentAlarmMinute";
-    String CURRENT_ALARM_DATE = "CurrentAlarmDate";
+    String CURRENT_ALARM_TIMESTAMP = "CurrentAlarmDate";
     private static Settings sInstance;
     private Gson gson;
     private ObjectMapper objectMapper;
@@ -125,13 +125,13 @@ public class Settings {
         prefsEditor.commit();
     }
 
-    public long getCurrentAlarmDate(){
-        return  mPreferences.getLong(CURRENT_ALARM_DATE, Calendar.getInstance().get(Calendar.DATE));
+    public long getCurrentAlarmTimestamp(){
+        return  mPreferences.getLong(CURRENT_ALARM_TIMESTAMP, System.currentTimeMillis());
     }
 
-    public void setCurrentAlarmDate(int value){
+    public void setCurrentAlarmTimestamp(long value){
         SharedPreferences.Editor prefsEditor = mPreferences.edit();
-        prefsEditor.putLong(CURRENT_ALARM_DATE, value);
+        prefsEditor.putLong(CURRENT_ALARM_TIMESTAMP, value);
         prefsEditor.commit();
     }
 
