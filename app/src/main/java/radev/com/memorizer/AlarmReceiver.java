@@ -49,6 +49,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         MemorizerApp.getInstance().getComponent().inject(this);
         wordsMap = settings.getTranslationHistory();
+        alarmScheduler.schedulerNextAlarm();
         String word = "";
         long timestamp = 0L;
         if (wordsMap.size() > 0) {

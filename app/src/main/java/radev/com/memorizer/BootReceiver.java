@@ -18,10 +18,15 @@ public class BootReceiver extends BroadcastReceiver {
     @Inject
     AlarmScheduler alarmScheduler;
 
+    @Inject
+    AlarmHelper alarmHelper;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         MemorizerApp.getInstance().getComponent().inject(this);
-        alarmScheduler.schedulerNextAlarm();
+        if (alarmHelper.isAlarmActive()) {
+            alarmScheduler.schedulerNextAlarm();
+        }
 
     }
 }

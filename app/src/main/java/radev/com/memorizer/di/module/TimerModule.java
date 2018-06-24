@@ -4,6 +4,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import radev.com.memorizer.DateTimeHelper;
 import radev.com.memorizer.apiTranslator.TimePickerFragment;
 
 /**
@@ -12,10 +13,17 @@ import radev.com.memorizer.apiTranslator.TimePickerFragment;
  */
 @Module
 public class TimerModule {
+
     @Provides
     @Singleton
     public TimePickerFragment provideTimePicker(){
-
         return new TimePickerFragment();
     }
+
+    @Provides
+    @Singleton
+    public DateTimeHelper provideDateTimeHelper(){
+        return new DateTimeHelper();
+    }
+
 }

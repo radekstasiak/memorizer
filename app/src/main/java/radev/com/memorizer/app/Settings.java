@@ -24,12 +24,16 @@ import radev.com.memorizer.model.Translation;
 public class Settings {
 
     private SharedPreferences mPreferences;
+
     private static final String PREF_NAME = "User Details";
     private static final String TRANSLATION_HISTORY_PREFS_NAME = "TranslationListHistory";
     private static final String FROM_TO_LANGUAGES_PREFS_NAME = "FromToLanguages";
-    String CURRENT_ALARM_HOURS = "CurrentAlarmHour";
-    String CURRENT_ALARM_MINUTE = "CurrentAlarmMinute";
-    String CURRENT_ALARM_TIMESTAMP = "CurrentAlarmDate";
+
+    private static final String CURRENT_ALARM_HOURS = "CurrentAlarmHour";
+    private static final String CURRENT_ALARM_MINUTE = "CurrentAlarmMinute";
+    private static final String CURRENT_ALARM_TIMESTAMP = "CurrentAlarmDate";
+    private static final String ALARM_ACTIVE= "AlarmActive";
+
     private static Settings sInstance;
     private Gson gson;
     private ObjectMapper objectMapper;
@@ -109,7 +113,7 @@ public class Settings {
         return mPreferences.getInt(CURRENT_ALARM_HOURS, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
     }
 
-    public void setCurrentAlarmHours(int hour) {
+    public void setCurrentAlarmHour(int hour) {
         SharedPreferences.Editor prefsEditor = mPreferences.edit();
         prefsEditor.putInt(CURRENT_ALARM_HOURS, hour);
         prefsEditor.commit();
@@ -135,5 +139,15 @@ public class Settings {
         prefsEditor.commit();
     }
 
+    public void setAlarmActive(boolean value){
+        SharedPreferences.Editor prefsEditor = mPreferences.edit();
+        prefsEditor.putBoolean(ALARM_ACTIVE, value);
+        prefsEditor.commit();
+    }
+
+
+    public boolean isAlarmActive(){
+        return  mPreferences.getBoolean(ALARM_ACTIVE,false);
+    }
 
 }
