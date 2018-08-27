@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,8 +21,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,14 +33,12 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
+
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.inject.Inject;
 
-import butterknife.ButterKnife;
 import radev.com.memorizer.apiTranslator.ApiTranslatorService;
 import radev.com.memorizer.apiTranslator.TimePickerFragment;
 import radev.com.memorizer.app.MemorizerApp;
@@ -71,13 +72,25 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
     Button mNextBtn;
 
     static List<Translation> wordsMap = new ArrayList<Translation>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard);
-        ButterKnife.bind(this);
         MemorizerApp.getInstance().getComponent().inject(this);
+
+
+        setSupportActionBar((Toolbar) binding.toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        binding.toolbar.findViewById(R.id.timePickerIv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimePickerDialog();
+            }
+        });
+        ((TextView) binding.toolbar.findViewById(R.id.toolbar_text)).setText(getResources().getString(R.string.app_name));
 
         mRecycler = binding.recyclerView;
         mProvideWordEt = binding.enterWordEt;
@@ -89,27 +102,26 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
         mRecycler.setAdapter(mAdapter);
         wordsMap = mSettings.getTranslationHistory();
         mAdapter.setData(wordsMap);
-
         mNextBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                if(!mProvideWordEt.getText().toString().isEmpty()){
-                List<String> optonParams = new ArrayList<String>();
-                optonParams.add("t");
-                //optonParams.add("at");
-                // optonParams.add("rm");
-                optonParams.add("bd");
-                // optonParams.add("md");
-                // optonParams.add("ss");
-                // optonParams.add("ex");
-                //  optonParams.add("rw");
-                Language languageFrom = Language.valueOf(binding.languageFrom.getSelectedItem().toString());
-                Language languageTo = Language.valueOf(binding.languageTo.getSelectedItem().toString());
-                mSettings.saveFromToLanguages(languageFrom, languageTo);
-                Call<String> callback2 = mApiService.getFullTranslation("gtx", languageFrom.getLanguageCode(), languageTo.getLanguageCode(), optonParams, mProvideWordEt.getText().toString());
-                // callback.enqueue(Dashboard.this);
-                callback2.enqueue(Dashboard.this);
+                if (!mProvideWordEt.getText().toString().isEmpty()) {
+                    List<String> optonParams = new ArrayList<String>();
+                    optonParams.add("t");
+                    //optonParams.add("at");
+                    // optonParams.add("rm");
+                    optonParams.add("bd");
+                    // optonParams.add("md");
+                    // optonParams.add("ss");
+                    // optonParams.add("ex");
+                    //  optonParams.add("rw");
+                    Language languageFrom = Language.valueOf(binding.languageFrom.getSelectedItem().toString());
+                    Language languageTo = Language.valueOf(binding.languageTo.getSelectedItem().toString());
+                    mSettings.saveFromToLanguages(languageFrom, languageTo);
+                    Call<String> callback2 = mApiService.getFullTranslation("gtx", languageFrom.getLanguageCode(), languageTo.getLanguageCode(), optonParams, mProvideWordEt.getText().toString());
+                    // callback.enqueue(Dashboard.this);
+                    callback2.enqueue(Dashboard.this);
 
                 }
             }
@@ -248,24 +260,25 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
         Log.d("FAILURE", t.getMessage());
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_bar_items, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_alarm:
-                showTimePickerDialog();
-                break;
-        }
-        return true;
-    }
-
     public void showTimePickerDialog() {
         timerPickerFragment.show(getSupportFragmentManager(), "timePicker");
     }
+
+    private void setupAlarmSwitch(){
+
+        ((Switch)binding.toolbar.findViewById(R.id.switchForActionBar)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if(isChecked){
+
+                }else{
+
+                }
+            }
+        });
+
+
+    }
+
+
 }

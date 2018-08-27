@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Memorizer</string>
     <string name="action_alarm">Action Alarm</string>
+    <string name="action_switch">Action Switch</string>
     <string name="title_activity_word_view">WordViewActivity</string>
     <string name="notification_text">You\'ve saved this word on %1$s</string>
 </resources>
