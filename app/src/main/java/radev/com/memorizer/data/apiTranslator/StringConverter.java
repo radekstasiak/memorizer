@@ -1,4 +1,4 @@
-package radev.com.memorizer.apiTranslator;
+package radev.com.memorizer.data.apiTranslator;
 
 /**
  * Created here and now by radek.

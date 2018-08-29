@@ -1,8 +1,10 @@
-package radev.com.memorizer.apiTranslator;
+package radev.com.memorizer.data.apiTranslator;
 
 import java.util.List;
 
+import io.reactivex.Single;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
@@ -14,7 +16,7 @@ import retrofit2.http.Query;
 public interface ApiTranslatorService {
 
     @GET("translate_a/single")
-    Call<String> getFullTranslation(@Query("client") String client,
+    Single<Response<String>> getFullTranslation(@Query("client") String client,
                                                 @Query("sl") String sourceLang,
                                                 @Query("tl") String translationLang,
                                                 @Query("dt") List<String> options,

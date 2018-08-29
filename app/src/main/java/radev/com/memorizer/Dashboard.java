@@ -1,11 +1,7 @@
 package radev.com.memorizer;
 
-import android.app.AlarmManager;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,9 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -26,7 +19,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,28 +31,36 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.inject.Inject;
 
-import radev.com.memorizer.apiTranslator.ApiTranslatorService;
-import radev.com.memorizer.apiTranslator.TimePickerFragment;
+import io.reactivex.disposables.CompositeDisposable;
+import radev.com.memorizer.data.DataRepository;
+import radev.com.memorizer.data.apiTranslator.ApiTranslatorService;
+import radev.com.memorizer.data.apiTranslator.TimePickerFragment;
 import radev.com.memorizer.app.MemorizerApp;
 import radev.com.memorizer.app.Settings;
 import radev.com.memorizer.databinding.ActivityDashboardBinding;
 import radev.com.memorizer.model.Language;
 import radev.com.memorizer.model.Translation;
+import radev.com.memorizer.rx.SchedulersFacade;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Dashboard extends AppCompatActivity implements Callback<String> {
+public class Dashboard extends AppCompatActivity{
     RecyclerView mRecycler;
     ActivityDashboardBinding binding;
     WordHistoryListAdapter mAdapter;
 
+//    @Inject
+//    ApiTranslatorService mApiService;
+
     @Inject
-    ApiTranslatorService mApiService;
+    DataRepository dataRepository;
 
     @Inject
     Settings mSettings;
 
+    @Inject
+    SchedulersFacade schedulersFacade;
     @Inject
     AlarmScheduler alarmScheduler;
 
@@ -71,6 +71,7 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
     EditText mProvideWordEt;
     Button mNextBtn;
 
+    private final CompositeDisposable disposables = new CompositeDisposable();
     static List<Translation> wordsMap = new ArrayList<Translation>();
 
     @Override
@@ -119,9 +120,14 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
                     Language languageFrom = Language.valueOf(binding.languageFrom.getSelectedItem().toString());
                     Language languageTo = Language.valueOf(binding.languageTo.getSelectedItem().toString());
                     mSettings.saveFromToLanguages(languageFrom, languageTo);
-                    Call<String> callback2 = mApiService.getFullTranslation("gtx", languageFrom.getLanguageCode(), languageTo.getLanguageCode(), optonParams, mProvideWordEt.getText().toString());
-                    // callback.enqueue(Dashboard.this);
-                    callback2.enqueue(Dashboard.this);
+                    disposables.add(
+                            dataRepository.getSimpleTranslation("gtx", binding.languageFrom.getSelectedItem().toString() ,binding.languageTo.getSelectedItem().toString(), optonParams, mProvideWordEt.getText().toString())
+                            .subscribeOn(schedulersFacade.io())
+                            .observeOn(schedulersFacade.ui())
+                            .subscribe(translationResponse ->
+                                    handleTranslationResult(translationResponse)
+                            )
+                    );
 
                 }
             }
@@ -134,6 +140,14 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
             }
         });
     }
+
+    private void handleTranslationResult(Translation translation){
+        wordsMap.add(translation);
+        mAdapter.setData(wordsMap);
+        mSettings.saveTranslationHistory(wordsMap);
+        mProvideWordEt.setText("");
+    }
+
 
     private void openWordExercisePopup() {
         if (!wordsMap.isEmpty()) {
@@ -220,44 +234,6 @@ public class Dashboard extends AppCompatActivity implements Callback<String> {
             int positionToLanguage = adapterTo.getPosition(fromToLanguages.get(1).name());
             languageToSpinner.setSelection(positionToLanguage);
         }
-    }
-
-    @Override
-    public void onResponse(Call<String> call, Response<String> response) {
-        response.body();
-
-        try {
-            JSONArray obja = new JSONArray(response.body());
-            JSONArray array = null;
-            if (obja.get(1) instanceof JSONArray) {
-                array = (JSONArray) ((JSONArray) ((JSONArray) obja.get(1)).get(0)).get(1);
-            } else {
-                array = new JSONArray(Arrays.asList(((JSONArray) ((JSONArray) obja.get(0)).get(0)).get(0)));
-            }
-            List<String> translationList = new ArrayList<String>();
-            Translation translation = new Translation();
-            translation.setSource(mProvideWordEt.getText().toString());
-            translation.setTimestamp(System.currentTimeMillis());
-            translation.setLanguageTo(Language.valueOf(binding.languageTo.getSelectedItem().toString()));
-            translation.setLanguageFrom(Language.valueOf(binding.languageFrom.getSelectedItem().toString()));
-            for (int i = 0; i < array.length(); i++) {
-                translationList.add((String) array.get(i));
-            }
-            translation.setTranslationList(translationList);
-            wordsMap.add(translation);
-            mAdapter.setData(wordsMap);
-            mSettings.saveTranslationHistory(wordsMap);
-            mProvideWordEt.setText("");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (ClassCastException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onFailure(Call<String> call, Throwable t) {
-        Log.d("FAILURE", t.getMessage());
     }
 
     public void showTimePickerDialog() {

@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import radev.com.memorizer.DateTimeHelper;
-import radev.com.memorizer.apiTranslator.TimePickerFragment;
+import radev.com.memorizer.data.apiTranslator.TimePickerFragment;
 
 /**
  * Created here and now by radek.

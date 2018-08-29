@@ -5,7 +5,7 @@ import android.app.Application;
 
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
-import radev.com.memorizer.apiTranslator.ApiTranslatorModule;
+import radev.com.memorizer.data.apiTranslator.ApiTranslatorModule;
 import radev.com.memorizer.di.components.AppComponent;
 import radev.com.memorizer.di.components.DaggerAppComponent;
 import radev.com.memorizer.di.module.AppModule;

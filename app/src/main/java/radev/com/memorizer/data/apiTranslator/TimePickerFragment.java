@@ -1,4 +1,4 @@
-package radev.com.memorizer.apiTranslator;
+package radev.com.memorizer.data.apiTranslator;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
